@@ -1,5 +1,6 @@
 #ifndef PID_H
 #define PID_H
+#include <vector>
 
 class PID {
 public:
@@ -16,6 +17,16 @@ public:
   double Kp;
   double Ki;
   double Kd;
+
+  /*
+  * Twiddle variables
+  */
+  // try range
+  std::vector<double> dp;
+  int step;
+  double total_error, best_error;
+
+
 
   /*
   * Constructor
