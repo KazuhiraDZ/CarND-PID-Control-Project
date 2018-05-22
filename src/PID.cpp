@@ -12,64 +12,54 @@ PID::PID() {}
 
 PID::~PID() {}
 
-void PID::Init(double Kp, double Ki, double Kd) {
-	PID::Kp = Kp;
-	PID::Ki = Ki;
-	PID::Kd = Kd;
+void PID::Init(double Kp_, double Ki_, double Kd_) {
+	Kp = Kp_;
+	Ki = Ki_;
+	Kd = Kd_;
 
 	p_error = 0.0;
 	d_error = 0.0;
 	i_error = 0.0;
 
 	// Twiddle parameter
-	//need_twiddle = false;
-	dp = {0.1 * Kp, 0.1 * Ki, 0.1 * Kd};
-	step = 1;
-	//param_index = 2;
-	// the step we start to calculate total_error
-	//n_settle_steps = 100;
-	// the step we stop loop
-	//n_eval_steps = 2000;
+	// dp = {0.1 * Kp, 0.1 * Ki, 0.1 * Kd};
+	// Kp += dp[0];
+	// Ki += dp[1];
+	// Kd += dp[2];	
+
 	total_error = 0.0;
 	best_error = std::numeric_limits<double>::max();
-	//tried_adding = false;
-	//tried_subtracting = false;
+
 
 }
 
 void PID::UpdateError(double cte) {
-	//if(step == 1){
-	//	p_error = cte;
-	//}
+
+	// compute the P,I,D errors
 	d_error = cte - p_error;
 	p_error = cte;
 	i_error += cte;
 
-	// update total error only if we're past number of settle steps
-	// just like what we did in course
-	//if(step % (n_settle_steps + n_eval_steps) > n_settle_steps){
 	total_error += pow(cte,2);
-	//}
-
-	// last step in twiddle loop
-	// if(need_twiddle && step % (n_settle_steps + n_eval_steps) > 0){
-	// 	cout << "step: " << step << endl;
-	// 	cout << "total error: " << total_error << endl;
-	// 	cout << "best error: " << best_error << endl;
-	// 	if(total_error < best_error){
-	// 		cout << "the best error is improved to " << total_error << " from " << best_error << endl;
-	// 		best_error = total_error;
-	// 		if(step != n_settle_steps + n_eval_steps){
-	// 			dp[param_index]
-	// 		} 
-	// 	}
-
-
-	// }
-
-
 
 }
+
+// void PID::TuneParameter(double avgerror){
+// 	if(avgerror < best_error){
+// 		best_error = avgerror;
+// 		for(int i = 0; i < dp.size(); i++){
+// 			dp[i] *= 1.1;
+// 		}
+// 	}
+// 	else{
+
+// 		for(int i = 0; i < dp.size(); i++){
+// 			p[i] -= 2 * dp[i];
+// 		}
+
+// 	}
+
+// }
 
 double PID::TotalError() {
 	return -PID::Kp * p_error - PID::Ki * i_error - PID::Kd * d_error;
